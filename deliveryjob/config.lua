@@ -16,25 +16,6 @@ Config.DeliveryPoints = {
     { name = 'Del Perro - Marathon Ave', pos = vec3(-1370.703247, -503.604401, 33.155273)},
     { name = 'Rockford Hills - Portola Dr', pos = vec3(-667.0, -186.2, 37.8) },
     { name = 'Burton - Hawick Ave', pos = vec3(-349.2, -130.5, 39.4) },
-    { name = 'Little Seoul - Calais Ave', pos = vec3(-498.3, -679.4, 33.2) },
-    { name = 'Pillbox Hill - Power St', pos = vec3(136.5, -936.3, 29.7) },
-    { name = 'Legion Square - Vespucci Blvd', pos = vec3(154.7, -1011.2, 29.3) },
-    { name = 'Mission Row - Sinner St', pos = vec3(441.2, -981.7, 30.7) },
-    { name = 'La Mesa - Popular St', pos = vec3(795.4, -728.1, 28.0) },
-    { name = 'Mirror Park - West Mirror Dr', pos = vec3(1265.0, -564.0, 68.6) },
-    { name = 'Vinewood - Alta St', pos = vec3(254.3, 223.9, 106.3) },
-    { name = 'Downtown Vinewood - Vinewood Blvd', pos = vec3(461.2, 179.1, 102.1) },
-    { name = 'Hawick - Spanish Ave', pos = vec3(-27.6, -142.2, 57.2) },
-    { name = 'Sandy Shores - Alhambra Dr', pos = vec3(1851.3, 3683.5, 34.2) },
-    { name = 'Grapeseed - Main St', pos = vec3(1698.3, 4785.7, 42.1) },
-    { name = 'Paleto Bay - Paleto Blvd', pos = vec3(-128.9, 6396.7, 31.6) },
-    { name = 'Chumash - Great Ocean Hwy', pos = vec3(-2978.3, 450.1, 14.7) },
-    { name = 'Banham Canyon - Banham Dr', pos = vec3(-2992.5, 733.2, 27.6) },
-    { name = 'Harmony - Route 68', pos = vec3(557.7, 2662.3, 42.0) },
-    { name = 'Davis - Grove St', pos = vec3(-79.6, -1620.9, 31.6) },
-    { name = 'Strawberry - Innocence Blvd', pos = vec3(253.4, -1586.2, 29.0) },
-    { name = 'Rancho - Jamestown St', pos = vec3(437.8, -1512.1, 29.3) },
-    { name = 'East Vinewood - El Rancho Blvd', pos = vec3(999.8, -293.2, 67.9) }
 }
 
 -- aantal drops per route
