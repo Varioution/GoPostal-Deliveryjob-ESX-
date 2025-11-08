@@ -22,13 +22,13 @@ local function notify(msg)
     lib.notify({ title = 'Pakket', description = msg, type = 'inform' })
 end
 
--- check of achterdeuren open staan (minimaal één deur)
-local function rearDoorsOpen()
-    if not (state.veh and DoesEntityExist(state.veh)) then return false end
-    local left = GetVehicleDoorAngleRatio(state.veh, 2) or 0.0
-    local right = GetVehicleDoorAngleRatio(state.veh, 3) or 0.0
-    return (left > 0.1) or (right > 0.1)
-end
+-- -- check of achterdeuren open staan (minimaal één deur) -- Als ui [E] wordt vervangen door ox_target
+-- local function rearDoorsOpen()
+--     if not (state.veh and DoesEntityExist(state.veh)) then return false end
+--     local left = GetVehicleDoorAngleRatio(state.veh, 2) or 0.0
+--     local right = GetVehicleDoorAngleRatio(state.veh, 3) or 0.0
+--     return (left > 0.1) or (right > 0.1)
+-- end
 
 -- text ui stijl
 local function showUI(text, icon)
