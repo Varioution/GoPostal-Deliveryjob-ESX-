@@ -152,7 +152,7 @@ AddEventHandler('playerDropped', function()
     PlayerJobs[src] = nil
 end)
 
--- éénmalige check bij resource start: outfits in SQL aanwezig?
+-- eenmalige check bij resource start: outfits in SQL aanwezig?
 AddEventHandler('onResourceStart', function(resName)
     if resName ~= GetCurrentResourceName() then return end
     CreateThread(function()
