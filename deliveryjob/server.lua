@@ -27,7 +27,18 @@ local function makeRoute()
     end
     local count = math.min(Config.DeliveriesPerRoute, #picks)
     local route = {}
-    for i = 1, count do route[i] = picks[i] end
+    for i = 1, count do
+        local p = picks[i]
+        local r = {
+            name = p.name,
+            pos = p.pos,
+            front = p.front,
+            back = p.back,
+            nh = p.nh, -- niet-thuis drop coords per adres
+            pickup = (math.random() < (Config.PickupChance or 0.0))
+        }
+        route[i] = r
+    end
     return route
 end
 
@@ -52,7 +63,7 @@ RegisterNetEvent('deliveryjob:start', function()
     local xPlayer = ESX.GetPlayerFromId(src)
     if not xPlayer or xPlayer.job.name ~= Config.RequiredJob then return end
 
-    -- Altijd willekeurige routes; seed RNG per start
+    -- Willekeurige routes; RNG seed per start
     math.randomseed(os.time() + src)
     local route = makeRoute()
     PlayerJobs[src] = {
@@ -91,6 +102,15 @@ RegisterNetEvent('deliveryjob:pickupBox', function(netId)
     TriggerClientEvent('deliveryjob:boxOk', src)
 end)
 
+-- markeer dat speler een pickup-doos draagt (NPC overhandiging)
+RegisterNetEvent('deliveryjob:pickupNpc', function()
+    local src = source
+    local job = PlayerJobs[src]
+    if not job or not job.active then return end
+    if job.carrying or job.remaining <= 0 then return end
+    job.carrying = true
+end)
+
 RegisterNetEvent('deliveryjob:delivered', function(idxClient)
     local src = source
     local job = PlayerJobs[src]
@@ -100,13 +120,50 @@ RegisterNetEvent('deliveryjob:delivered', function(idxClient)
 
     local ped = GetPlayerPed(src)
     local p = GetEntityCoords(ped)
-    local target = getPointPos(job.route[job.idx])
-    if dist(p, target) > Config.DeliverRadius + 2.0 then return end
+    local entry = job.route[job.idx]
+    local target = getPointPos(entry)
+    local ok = dist(p, target) <= (Config.DeliverRadius + 2.0)
+    if not ok and type(entry) == 'table' then
+        if entry.back and entry.back.x then
+            ok = dist(p, entry.back) <= ((Config.BackDropRadius or 3.5) + 1.0)
+        end
+        if not ok and entry.nh and #entry.nh > 0 then
+            for i = 1, #entry.nh do
+                local nhp = entry.nh[i]
+                if nhp and dist(p, nhp) <= ((Config.BackDropRadius or 3.5) + 1.0) then
+                    ok = true
+                    break
+                end
+            end
+        end
+    end
+    if not ok then return end
 
-    -- Betalingsregeling: 400 per pakketje
+    -- Betaling per drop
     job.delivered = job.delivered + 1
     job.earned = job.earned + (Config.PayPerDrop or 400)
 
+    job.carrying = false
+    job.remaining = math.max(0, job.remaining - 1)
+    job.idx = job.idx + 1
+    if job.idx <= #job.route then
+        TriggerClientEvent('deliveryjob:next', src, job.idx)
+    else
+        job.done = true
+        TriggerClientEvent('deliveryjob:all_delivered', src)
+    end
+end)
+
+-- pickup alternatief zonder afstand tot target
+RegisterNetEvent('deliveryjob:collectedPickup', function(idxClient)
+    local src = source
+    local job = PlayerJobs[src]
+    if not job or not job.active then return end
+    if idxClient ~= job.idx then return end
+    if not job.carrying then return end
+
+    job.delivered = job.delivered + 1
+    job.earned = job.earned + (Config.PayPerDrop or 400)
     job.carrying = false
     job.remaining = math.max(0, job.remaining - 1)
     job.idx = job.idx + 1
@@ -152,7 +209,7 @@ AddEventHandler('playerDropped', function()
     PlayerJobs[src] = nil
 end)
 
--- eenmalige check bij resource start: outfits in SQL aanwezig?
+-- eenmalige check bij resource start outfits in SQL aanwezig
 AddEventHandler('onResourceStart', function(resName)
     if resName ~= GetCurrentResourceName() then return end
     CreateThread(function()
